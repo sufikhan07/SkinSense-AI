@@ -41,6 +41,7 @@ Git
 GitHub
 Postman
 VS Code
+
 🔄 How It Works
 User
  ↓
@@ -63,19 +64,7 @@ AI/ML-based skin concern analysis
 Personalized recommendations
 Responsive web interface
 Structured full-stack architecture
-📌 Project Status
 
-🚧 Currently in active development
-
-The core frontend and backend architecture is being developed and integrated progressively. Upcoming work includes completing the ML pipeline, recommendation engine, database integration, testing, and deployment.
-
-🎯 Future Goals
-Computer-vision-based skin analysis
-Advanced ML/deep-learning models
-Personalized skincare routines
-Recommendation engine
-Assessment history and progress tracking
-Production deployment
 ⚠️ Disclaimer
 
 SkinSense-AI is an educational technology project and is not a medical diagnostic tool. Results and recommendations should not replace professional dermatological or medical advice.
