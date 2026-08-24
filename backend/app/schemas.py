@@ -1,13 +1,6 @@
 from pydantic import BaseModel, EmailStr
 
 
-class AssessmentRequest(BaseModel):
-    skinType: str
-    concern: str
-    sensitivity: str
-    age: int
-
-
 class RegisterRequest(BaseModel):
     name: str
     email: EmailStr
@@ -17,6 +10,16 @@ class RegisterRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+
+class AssessmentRequest(BaseModel):
+    skinType: str
+    concerns: list[str]
+    sensitivity: str
+    acneFrequency: str
+    rashFrequency: str
+    sunscreenUse: str
+    age: int
 
 
 class UserResponse(BaseModel):
