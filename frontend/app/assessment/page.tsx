@@ -4,8 +4,7 @@ import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+const API_URL = "https://skinsense-ai-f7o6.onrender.com";
 
 const skinTypes = [
     {
@@ -77,8 +76,8 @@ function OptionButton({
             type="button"
             onClick={onClick}
             className={`rounded-[26px] border p-5 text-left transition duration-300 ${active
-                    ? "border-[#69745F] bg-[#E3E8DC] shadow-[0_15px_40px_rgba(75,84,65,0.13)]"
-                    : "border-[#DDD7CA] bg-white/70 hover:-translate-y-1 hover:border-[#ACA492] hover:bg-white"
+                ? "border-[#69745F] bg-[#E3E8DC] shadow-[0_15px_40px_rgba(75,84,65,0.13)]"
+                : "border-[#DDD7CA] bg-white/70 hover:-translate-y-1 hover:border-[#ACA492] hover:bg-white"
                 }`}
         >
             <div className="flex items-center justify-between gap-4">
@@ -88,8 +87,8 @@ function OptionButton({
 
                 <span
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${active
-                            ? "border-[#66705A] bg-[#66705A] text-white"
-                            : "border-[#C9C2B3]"
+                        ? "border-[#66705A] bg-[#66705A] text-white"
+                        : "border-[#C9C2B3]"
                         }`}
                 >
                     {active ? "✓" : ""}
@@ -379,9 +378,9 @@ export default function AssessmentPage() {
                                             )
                                         }
                                         className={`min-h-[180px] rounded-[30px] border p-6 text-left transition duration-300 ${skinType ===
-                                                option.name
-                                                ? "border-[#65715D] bg-[#E1E7DA] shadow-xl"
-                                                : "border-[#DDD7CA] bg-white/65 hover:-translate-y-2 hover:bg-white hover:shadow-lg"
+                                            option.name
+                                            ? "border-[#65715D] bg-[#E1E7DA] shadow-xl"
+                                            : "border-[#DDD7CA] bg-white/65 hover:-translate-y-2 hover:bg-white hover:shadow-lg"
                                             }`}
                                     >
                                         <div className="flex justify-between">
