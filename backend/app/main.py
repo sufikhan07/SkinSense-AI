@@ -1,10 +1,11 @@
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from . import schemas
 from .auth import (
     create_access_token,
+    decode_access_token,
     hash_password,
     verify_password,
 )
@@ -48,14 +49,65 @@ def health():
     }
 
 
+def get_current_user(
+    authorization: str | None = Header(default=None),
+    db: Session = Depends(get_db),
+):
+    if not authorization:
+        raise HTTPException(
+            status_code=401,
+            detail="Authentication required.",
+        )
+
+    if not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid authentication header.",
+        )
+
+    token = authorization.replace("Bearer ", "", 1)
+
+    payload = decode_access_token(token)
+
+    if not payload:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired token.",
+        )
+
+    user_id = payload.get("sub")
+
+    if not user_id:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid token.",
+        )
+
+    user = (
+        db.query(User)
+        .filter(User.id == int(user_id))
+        .first()
+    )
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found.",
+        )
+
+    return user
+
+
 @app.post("/api/auth/register")
 def register(
     user_data: schemas.RegisterRequest,
     db: Session = Depends(get_db),
 ):
+    email = user_data.email.lower()
+
     existing_user = (
         db.query(User)
-        .filter(User.email == user_data.email)
+        .filter(User.email == email)
         .first()
     )
 
@@ -73,7 +125,7 @@ def register(
 
     user = User(
         name=user_data.name,
-        email=user_data.email.lower(),
+        email=email,
         hashed_password=hash_password(
             user_data.password
         ),
@@ -152,6 +204,51 @@ def login(
             "sensitivity": user.sensitivity,
             "concerns": user.concerns,
             "age": user.age,
+        },
+    }
+
+
+@app.get("/api/profile")
+def get_profile(
+    current_user: User = Depends(get_current_user),
+):
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+        "skin_type": current_user.skin_type,
+        "sensitivity": current_user.sensitivity,
+        "concerns": current_user.concerns,
+        "age": current_user.age,
+    }
+
+
+@app.put("/api/profile/assessment")
+def save_assessment_profile(
+    assessment: schemas.AssessmentRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    current_user.skin_type = assessment.skinType
+    current_user.sensitivity = assessment.sensitivity
+    current_user.concerns = ", ".join(
+        assessment.concerns
+    )
+    current_user.age = assessment.age
+
+    db.commit()
+    db.refresh(current_user)
+
+    return {
+        "message": "Skin profile updated successfully.",
+        "user": {
+            "id": current_user.id,
+            "name": current_user.name,
+            "email": current_user.email,
+            "skin_type": current_user.skin_type,
+            "sensitivity": current_user.sensitivity,
+            "concerns": current_user.concerns,
+            "age": current_user.age,
         },
     }
 
